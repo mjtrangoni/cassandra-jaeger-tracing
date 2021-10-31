@@ -1,0 +1,25 @@
+on: [push, pull_request]
+name: Build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Build
+      shell: sh
+      run: |
+        mvn --version
+        mvn --batch-mode package
+        mkdir staging
+        cp target/cassandra-jaeger-tracing-*-jar-with-dependencies.jar staging
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Package
+        path: staging
